@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjq.electricitysystem.mapper.AreaInfoMapper">
+
+    <select id="selectAll" parameterType="int" resultType="com.yjq.electricitysystem.entity.AreaInfo">
+        SELECT * FROM OMS.T_AREA
+    </select>
+
+    <insert id="insert" parameterType="com.yjq.electricitysystem.entity.AreaInfo">
+        INSERT INTO OMS.T_AREA (AREA_CODE, AREA_NAME)
+        VALUES (#{areaCode},#{areaName})
+    </insert>
+    
+    <update id="updateById" parameterType="com.yjq.electricitysystem.entity.AreaInfo">
+        UPDATE OMS.T_AREA SET AREA_NAME = #{areaName}
+        WHERE AREA_CODE = #{areaCode}
+    </update>
+
+</mapper>
