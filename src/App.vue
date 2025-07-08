@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import useMainStore from './stores/main'
 import { storeToRefs } from 'pinia'
@@ -29,26 +28,10 @@ const router = useRouter()
 const mainStore = useMainStore()
 const { user } = storeToRefs(mainStore)
 
-const userRoleText = computed(() => {
-  switch (mainStore.user?.type) {
-    case '0': return '普通用户'
-    case '1': return '总局管理员'
-    case '2': return '分局管理员'
-    default: return ''
-  }
-})
-
 const handleLogout = () => {
   mainStore.logout()
   router.push('/login')
 }
-
-
-import axios from 'axios'
-axios.get(".....").then( (res) => {
-  console.log(res);
-})
-
 
 </script>
 
@@ -59,7 +42,6 @@ axios.get(".....").then( (res) => {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
-
 .header {
   display: flex;
   justify-content: space-between;

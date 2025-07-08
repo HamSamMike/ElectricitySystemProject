@@ -5,6 +5,7 @@
           <div class="querybox">
             <span class="querymonthtext">选择报表月份范围：</span>
             <el-date-picker
+              value-format="YYYY-MM"
               v-model="queryMonth"
               type="monthrange"
               range-separator="到"
@@ -24,10 +25,11 @@
               />
             </div>
               
-            <el-button type="primary" @click="handleQuery(queryForm)" class="btn">查询</el-button>
+            <el-button type="primary" @click="handleQuery(queryForm.value)" class="btn">查询</el-button>
           </div>
           
-          <div class="report-title">{{ queryForm.month }} 总局用电供电月报（{{ queryForm.areaName }}）</div>
+          <div v-if="queryMonth[0] === queryMonth[1]" class="report-title">{{ queryMonth[0] }} 总局用电供电月报（{{ findAreaName(selectedAreaCode) }}）</div>
+          <div v-else-if="queryMonth[0] !== queryMonth[1]" class="report-title">{{ queryMonth[0] }}~{{ queryMonth[1] }} 总局用电供电月报（{{ findAreaName(selectedAreaCode) }}）</div>
           <el-table stripe :data="monthsData" border style="width: 100%">
             <el-table-column prop="feeMonth" label="月份" />
             <el-table-column prop="areaName" label="区域" >
@@ -47,30 +49,41 @@
   import { ref, onMounted, onUpdated, computed } from 'vue'
 
   const mainStore = useMainStore()
-  const { areaList } = storeToRefs(mainStore)
+  const { areaList, user } = storeToRefs(mainStore)
   const headAdminStore = useHeadAdminStore()
   const { monthsData } = storeToRefs(headAdminStore)
-  const queryForm = ref({
-    month: "2025-01",
-    areaName: "江岸区"
-  })
-  const queryMonth = ref(queryForm.value.month)
+  const findAreaName = (code) => {//根据areaCode找areaName
+    const item = areaList.value.find(item => item.areaCode === code)
+    return item ? item.areaName : 0
+  }
+  const queryMonth = ref(["2025-01","2025-02"])
+  const selectedAreaCode = ref(102)
   onMounted(() => {
-    headAdminStore.fetchMonthsData(queryForm.value)
+    handleQuery()
   })
   onUpdated(() => {
-    headAdminStore.fetchMonthsData(queryForm.value)
+    handleQuery()
   })
-  const handleQuery = (queryForm) => {
-    headAdminStore.fetchMonthsData()
+  const monthList = ['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06']
+  const handleQuery = () => {
+    for(let i = 0; i < monthList.length; i ++) {
+      if(queryMonth.value[0] === monthList[i]) {
+        headAdminStore.fetchMonthsData({
+          month: monthList[i],
+          areaCode: user.value.areaCode
+        })
+        console.log("上传数据：", monthList[i], user.value.areaCode);
+      }
+      console.log(queryMonth.value[0]);
+    }
   }
-  const selectedAreaCode = ref('')
   const areaOptions = computed(() => {
     return areaList.value.map(item => ({
       value: item.areaCode, // 实际绑定的值
       label: item.areaName  // 显示的文字
     }))
   })
+  
 </script>
 
 <style scoped>
