@@ -2,6 +2,7 @@
   <div class="stats">
     <el-tab-pane label="街道统计" name="stats">
         <el-card shadow="hover">
+          <el-button type="primary" @click="areaSearch" style="margin-bottom: 20px">查询</el-button>
           <el-table stripe :data="adminCommunityInfo" border style="width: 100%">
             <el-table-column label="区域">
               <template #header class="searchbox">
@@ -19,16 +20,11 @@
                 </div>
               </template>
               <template #default="{ row }">
-                {{ findAreaName(row.areaCode) }}
+                {{ findAreaName(row.communityCode) }}
               </template>
             </el-table-column>
-            <el-table-column label="街道" >
-              <template #default="{ row }">
-                {{ findCommunityName(row.communityCode) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="usersNum" label="用户数"/>
-            <el-table-column prop="yesterdayUsage" label="日用电量(度)" >
+            <el-table-column prop="usersCount" label="用户数"/>
+            <el-table-column prop="totalConsume" label="日用电量(度)" >
               <template #header>
                   <el-date-picker
                     v-model="usageDate"
@@ -40,7 +36,7 @@
                   <span class="text">日用电量(度)</span>
               </template>
             </el-table-column>
-            <el-table-column prop="todaySupply">
+            <el-table-column prop="totalSupply">
               <template #header>
                   <el-date-picker
                     v-model="supplyDate"
@@ -69,11 +65,15 @@
   const { communityList, areaList } = storeToRefs(mainStore)
 
   onMounted(() => {
-    headAdminStore.fetchAdminsCommunityData()
+    headAdminStore.fetchAdminsCommunityData({
+      areaCode: selectedAreaCode.value,
+      startDate: usageDate.value,
+      endDate: supplyDate.value
+    })
   })
-  onUpdated(() => {
-    headAdminStore.fetchAdminsCommunityData()
-  })
+  // onUpdated(() => {
+  //   headAdminStore.fetchAdminsCommunityData()
+  // })
   
   const findAreaName = (code) => {//根据areaCode找areaName
     const item = areaList.value.find(item => item.areaCode === code)
@@ -83,22 +83,24 @@
     const item = communityList.value.find(item => item.communityCode === code)
     return item ? item.communityName : 0
   }
-  const areaSearchText = ref("")
+  const selectedAreaCode = ref('')
   const usageDate = ref('2025-05-01')
   const supplyDate = ref('2025-05-02')
   
-  const areaSearch = (text) => {
-    headAdminStore.fetchAdminsCommunityData(findAreaCode(text))
+  const areaSearch = () => {
+    headAdminStore.fetchAdminsCommunityData({
+      areaCode: selectedAreaCode.value,
+      startDate: usageDate.value,
+      endDate: supplyDate.value
+    })
   }
 
-  const selectedAreaCode = ref('')
   const areaOptions = computed(() => {
     return areaList.value.map(item => ({
       value: item.areaCode, // 实际绑定的值
       label: item.areaName  // 显示的文字
     }))
   })
-  
 </script>
 
 <style scoped>

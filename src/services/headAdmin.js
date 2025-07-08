@@ -1,7 +1,5 @@
 import axios from "axios"
-export function getAdminCommunityInfo() {
-  return axios.get("http://localhost:8080/api/admins/selectPage")
-}
+
 export function addAdminInfo(data) {
   return axios.post("http://localhost:8080/api/admins/add", data)
 }
@@ -10,6 +8,9 @@ export function deleteAdminInfo(data) {
 }
 export function changeAdminInfo(data) {
   return axios.put("http://localhost:8080/api/admins/update", data)
+}
+export function getAdminCommunityInfo(data) {
+  return axios.get("http://localhost:8080/api/supplylog/selectPage", data)
 }
 export function getApproveInfo() {
   return axios.get("http://localhost:8080")
