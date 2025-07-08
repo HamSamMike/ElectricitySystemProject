@@ -44,10 +44,11 @@ const handleLogout = () => {
 }
 
 
-import axios from 'axios'
-axios.get(".....").then( (res) => {
-  console.log(res);
-})
+// import axios from 'axios'
+// axios.get("http://localhost:8080/api/admins/selectPage").then( (res) => {
+//   console.log(res.data);
+//   console.log("app请求已达到");
+// })
 
 
 </script>

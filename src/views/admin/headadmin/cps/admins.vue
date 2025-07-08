@@ -13,7 +13,7 @@
             </el-table-column>
             <el-table-column label="负责区域">
               <template #default="{row}">
-                {{ findAreaName(row.areaCode) }}
+                {{ row.areaCode }}
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -29,14 +29,20 @@
 
       <el-dialog v-model="addAdminFlag" title="注册管理员信息" width="30%">
       <el-form :model="addAdminForm">
-        <el-form-item label="管理员姓名">
-          <el-input v-model="addAdminForm.name" type="string"></el-input>
+        <el-form-item label="管理员账号">
+          <el-input v-model="addAdminForm.adminCode" type="string"></el-input>
         </el-form-item>
         <el-form-item label="管理员密码">
-          <el-input v-model="addAdminForm.password" type="string"></el-input>
+          <el-input v-model="addAdminForm.adminPasswd" type="string"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员姓名">
+          <el-input v-model="addAdminForm.adminName" type="string"></el-input>
+        </el-form-item>
+        <el-form-item label="管理员管理区域">
+          <el-input v-model="addAdminForm.areaCode" type="string"></el-input>
         </el-form-item>
         <el-form-item label="管理员类型">
-          <el-radio-group v-model="addAdminForm.type">
+          <el-radio-group v-model="addAdminForm.adminType">
             <el-radio label="1">总局管理员</el-radio>
             <el-radio label="2">分局管理员</el-radio>
           </el-radio-group>
@@ -76,13 +82,10 @@
   import useMainStore from '@/stores/main'
   import { storeToRefs } from 'pinia'
   import { ref, onMounted } from 'vue'
-
+  import axios from 'axios'
   const mainStore = useMainStore()
   const { areaList } = storeToRefs(mainStore)
   const headAdminStore = useHeadAdminStore()
-  onMounted(() => {
-    headAdminStore.fetchAdminsData()
-  })
   
   const { adminList } = storeToRefs(headAdminStore)
 
@@ -91,20 +94,30 @@
     return item ? item.areaName : 0
   }
   const addAdminFlag = ref(false)
-  const addAdminForm = ref({})
-  const showAddAdmin = (admin) => {
-    addAdminForm.value = admin
+  const addAdminForm = ref({
+    adminName: '小刘',
+    adminPasswd: '111',
+    adminType: 1, // 默认总局管理员
+    areaCode: 101,
+    adminCode: 2323
+  })
+  const showAddAdmin = () => {
     addAdminFlag.value = true
   }
   const handleAddAdmin = () => {
-    headAdminStore.addAdminData(addAdminForm.value)
+    axios.post("http://localhost:8080/api/admins/add", addAdminForm.value)
+    console.log("已经成功添加管理员");
+    
     addAdminFlag.value = false
-    addAdminForm.value.amount = 0
+    addAdminForm.value = null
     headAdminStore.fetchAdminsData()
+    
   }
   const deleteAdmin = (admin) => {
-    headAdminStore.deleteAdminData(admin.adminCode)
-    headAdminStore.fetchAdminsData()
+    console.log(admin);
+    
+    axios.delete("http://localhost:8080/api/admins/delete", admin.adminCode)
+
   }
   const changeAdminFlag = ref(false)
   const changeAdminForm = ref({})
@@ -123,6 +136,12 @@
     })
   }
 
+  
+  onMounted(() => {
+    console.log(adminList.value);
+    
+    headAdminStore.fetchAdminsData()
+  })
 
 </script>
 

@@ -4,7 +4,7 @@
         <el-card shadow="hover">
           <el-table stripe :data="adminCommunityInfo" border style="width: 100%">
             <el-table-column label="区域">
-              <template #header class="searchbox">
+              <template #header>
                 
                 <div class="search-container">
                   <div class="describe">区域</div>
@@ -67,16 +67,16 @@
   import useMainStore from '@/stores/main'
   import { storeToRefs } from 'pinia'
   import { ref, onMounted, onUpdated } from 'vue'
-
+  import axios from 'axios'
   const headAdminStore = useHeadAdminStore()
   const mainStore = useMainStore()
   const { communityList, areaList } = storeToRefs(mainStore)
 
   onMounted(() => {
-    headAdminStore.fetchAdminsCommunityData()
+    axios.get("http://localhost:8080/api/admins/selectPage").then( (res) => {adminList.value = res.data.data.list})
   })
   onUpdated(() => {
-    headAdminStore.fetchAdminsCommunityData()
+    axios.get("http://localhost:8080/api/admins/selectPage").then( (res) => {adminList.value = res.data.data.list})
   })
   
   const findAreaName = (code) => {//根据areaCode找areaName
@@ -115,10 +115,9 @@
   width: 100%;
   height: 20px;
   cursor: pointer;
-  img {
+}
+img {
     width: 20px;
     height: 20px;
   }
-  
-}
 </style>

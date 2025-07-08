@@ -29,7 +29,7 @@
   const headAdminStore = useHeadAdminStore()
   const { approveData } = storeToRefs(headAdminStore)
   onMounted(() => {
-
+    headAdminStore.fetchApproveData()
   })
   onUpdated(() => {
     

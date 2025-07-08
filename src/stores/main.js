@@ -3,7 +3,14 @@ import * as api from '@/services/index.js'
 
 const useMainStore = defineStore('main', {
   state: () => ({
-    user: [],
+    user: [{
+      userName: '杨云',
+      userCode: 1000000002,
+      userPasswd: 111,
+      areaCode: 101,
+      communityCode: 10101,
+      type: 1,
+      }],
     token: "",
     areaList: [
       {
