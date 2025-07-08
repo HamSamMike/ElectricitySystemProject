@@ -74,22 +74,22 @@ const handleLogin = () => {
       //   balance: '234.8',
       //   type: '0',
       // }
-      // user.value = {
-      //   userName: '杨云',
-      //   userCode: '1000000002',
-      //   userPasswd: '111',
-      //   areaCode: "101",
-      //   communityCode: "10101",
-      //   type: '1',
-      // }
       user.value = {
-        userName: '李四',
-        userCode: '1000000003',
-        userPasswd: '222',
+        userName: '杨云',
+        userCode: '1000000002',
+        userPasswd: '111',
         areaCode: "101",
         communityCode: "10101",
-        type: '2',
+        type: '1',
       }
+      // user.value = {
+      //   userName: '李四',
+      //   userCode: '1000000003',
+      //   userPasswd: '222',
+      //   areaCode: "101",
+      //   communityCode: "10101",
+      //   type: '2',
+      // }
       mainStore.isAuthenticated = true
       switch (user.value.type) {
         case '0':

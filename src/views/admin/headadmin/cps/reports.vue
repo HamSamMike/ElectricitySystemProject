@@ -13,23 +13,21 @@
             />
             <p></p>
             <div class="areabox">
-              <div class="areatext">填写报表查询区域：</div>
-              <el-form-item>
-                <el-input 
-                v-model="queryForm.areaName" 
-                style="width: 130px"
-                />
-              </el-form-item>
+              <div class="areatext">选择报表查询区域：</div>
+              <el-select-v2
+                v-model="selectedAreaCode"
+                :options="areaOptions"
+                placeholder="请选择区域"
+                style="width: 140px"
+                filterable
+                clearable
+              />
             </div>
               
-            <el-button type="primary" @click="handleQuery" class="btn">查询</el-button>
+            <el-button type="primary" @click="handleQuery(queryForm)" class="btn">查询</el-button>
           </div>
           
-
-          <!-- <div v-if="queryForm.startMonth === queryForm.endMonth"  class="report-title">{{ queryForm.startMonth }} 总局用电供电月报（{{ queryForm.areaName }}）</div>
-          <div v-else-if="queryForm.startMonth !== queryForm.endMonth"  class="report-title">{{ queryForm.startMonth }}~{{ queryForm.endMonth }}总局用电供电月报（{{ queryForm.areaName }}）</div> -->
-
-          <div class="report-title">{{ queryForm.startMonth }} 总局用电供电月报（{{ queryForm.areaName }}）</div>
+          <div class="report-title">{{ queryForm.month }} 总局用电供电月报（{{ queryForm.areaName }}）</div>
           <el-table stripe :data="monthsData" border style="width: 100%">
             <el-table-column prop="feeMonth" label="月份" />
             <el-table-column prop="areaName" label="区域" >
@@ -46,18 +44,17 @@
   import useHeadAdminStore from '@/stores/headAdmin';
   import { storeToRefs } from 'pinia'
   import useMainStore from '@/stores/main'
-  import { ref, onMounted, onUpdated } from 'vue'
+  import { ref, onMounted, onUpdated, computed } from 'vue'
 
   const mainStore = useMainStore()
   const { areaList } = storeToRefs(mainStore)
   const headAdminStore = useHeadAdminStore()
   const { monthsData } = storeToRefs(headAdminStore)
   const queryForm = ref({
-    startMonth: "2025-01",
-    endMonth: "2025-02",
+    month: "2025-01",
     areaName: "江岸区"
   })
-  const queryMonth = ref([queryForm.value.startMonth,queryForm.value.endMonth ])
+  const queryMonth = ref(queryForm.value.month)
   onMounted(() => {
     headAdminStore.fetchMonthsData(queryForm.value)
   })
@@ -67,6 +64,13 @@
   const handleQuery = (queryForm) => {
     headAdminStore.fetchMonthsData()
   }
+  const selectedAreaCode = ref('')
+  const areaOptions = computed(() => {
+    return areaList.value.map(item => ({
+      value: item.areaCode, // 实际绑定的值
+      label: item.areaName  // 显示的文字
+    }))
+  })
 </script>
 
 <style scoped>

@@ -8,18 +8,14 @@
                 
                 <div class="search-container">
                   <div class="describe">区域</div>
-                  <el-input
-                    v-model="areaSearchText"
-                    placeholder="搜索区域"
-                    @keyup.enter="areaSearch(areaSearchText)"
-                    style="width: 180px"
-                  >
-                    <template #append>
-                      <div class="icon" @click="areaSearch(areaSearchText)">
-                        <img src="../../../../assets/imgs/aigei_com.png" alt="">
-                      </div>
-                    </template>
-                  </el-input>
+                  <el-select-v2
+                    v-model="selectedAreaCode"
+                    :options="areaOptions"
+                    placeholder="请选择区域"
+                    style="width: 140px"
+                    filterable
+                    clearable
+                  />
                 </div>
               </template>
               <template #default="{ row }">
@@ -66,7 +62,7 @@
   import useHeadAdminStore from '@/stores/headAdmin';
   import useMainStore from '@/stores/main'
   import { storeToRefs } from 'pinia'
-  import { ref, onMounted, onUpdated } from 'vue'
+  import { ref, onMounted, onUpdated, computed } from 'vue'
 
   const headAdminStore = useHeadAdminStore()
   const mainStore = useMainStore()
@@ -94,6 +90,14 @@
   const areaSearch = (text) => {
     headAdminStore.fetchAdminsCommunityData(findAreaCode(text))
   }
+
+  const selectedAreaCode = ref('')
+  const areaOptions = computed(() => {
+    return areaList.value.map(item => ({
+      value: item.areaCode, // 实际绑定的值
+      label: item.areaName  // 显示的文字
+    }))
+  })
   
 </script>
 
