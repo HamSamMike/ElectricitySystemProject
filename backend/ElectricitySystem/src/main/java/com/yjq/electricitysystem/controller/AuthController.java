@@ -1,11 +1,14 @@
 package com.yjq.electricitysystem.controller;
 
-import com.yjq.electricitysystem.dto.LoginRequest;
-import com.yjq.electricitysystem.dto.JwtResponse;
+import com.yjq.electricitysystem.common.Result;
+import com.yjq.electricitysystem.entity.Admin;
 import com.yjq.electricitysystem.entity.UserInfo;
+import com.yjq.electricitysystem.service.AdminService;
 import com.yjq.electricitysystem.service.UserInfoService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.Resource;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,43 +27,33 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
+    @Resource
+    // 用户登录
     private UserInfoService userService;
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    @Resource
+    // 管理员登录
+    private AdminService adminService;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpirationMs;
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        // 1. 根据用户码查库
-        Optional<UserInfo> opt = userService.get(req.getUserCode());
-
-        // 把配置文件里的字符串 secret 转成字节
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        // 如果想要更安全，secret 最少 256-bit 长度，即至少 32 个字符
-        Key key = Keys.hmacShaKeyFor(keyBytes);
-
-        // 2. 校验密码
-        if (opt.isPresent() && opt.get().getUserPasswd().equals(req.getUserPasswd())) {
-            UserInfo u = opt.get();
-            String token = Jwts.builder()
-                    .setSubject(u.getUserCode().toString())
-                    .claim("userName", u.getUserName())
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                    .signWith(key,SignatureAlgorithm.HS512)
-                    .compact();
-            // 成功返回 JwtResponse
-            return ResponseEntity.ok(new JwtResponse(token, u.getUserName()));
-        }
-
-        // 3. 不通过返回 401 + 错误消息
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body("账号或密码错误");
+    @PostMapping("/admin01/login")
+    public Result admin01login(@RequestBody Admin admin) {
+        // 调用 service，拿到脱敏后的管理员对象
+        Admin db = adminService.admin01login(admin);
+        // 返回完整信息
+        return Result.success(db);
     }
 
+    @PostMapping("/admin02/login")
+    public Result admin02login(@RequestBody Admin admin) {
+        Admin db = adminService.admin02login(admin);
+        return Result.success(db);
+    }
+
+    // 普通用户登录
+    @PostMapping("/user/login")
+    public Result userlogin(@RequestBody UserInfo userInfo) {
+        UserInfo db = userService.userlogin(userInfo);
+        // 登录成功，将用户全部信息（脱敏后）返回
+        return Result.success(db);
+    }
 }

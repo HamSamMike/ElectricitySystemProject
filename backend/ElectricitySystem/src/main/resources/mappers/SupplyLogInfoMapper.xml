@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjq.electricitysystem.mapper.SupplyLogInfoMapper">
+
+    <resultMap id="SupplyLogInfoMap" type="com.yjq.electricitysystem.entity.SupplyLogInfo">
+        <!-- 把 areaCode 映射到 communityCode 字段 -->
+        <result column="area_code"      property="communityCode"/>
+        <result column="user_count"     property="userCount"/>
+        <result column="total_consume"  property="totalConsume"/>
+        <result column="total_supply"   property="totalSupply"/>
+    </resultMap>
+
+    <select id="selectPagefindAll"
+            resultMap="SupplyLogInfoMap"
+            parameterType="map">
+        SELECT
+            /* 复用 communityCode 字段来存 areaCode */
+            #{areaCode}                  AS area_code,
+            /* 区域下用户总数 */
+            ( SELECT COUNT(*)
+              FROM OMS.t_userinfo u
+              WHERE u.area_code = #{areaCode}
+            )                            AS user_count,
+            /* startDate 当天的用电量 */
+            ( SELECT NVL(SUM(c.consume_num),0)
+              FROM OMS.t_consumptionlog c
+              WHERE c.area_code = #{areaCode}
+                AND TRUNC(c.logdate) = TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            )                            AS total_consume,
+            /* endDate 当天的供电量 */
+            ( SELECT NVL(SUM(s.supply_num),0)
+              FROM OMS.t_supplylog s
+              WHERE s.area_code = #{areaCode}
+                AND TRUNC(s.logdate) = TO_DATE(#{endDate}, 'YYYY-MM-DD')
+            )                            AS total_supply
+        FROM DUAL
+    </select>
+
+</mapper>

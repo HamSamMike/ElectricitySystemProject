@@ -8,7 +8,9 @@ import com.yjq.electricitysystem.mapper.AreaInfoMapper;
 import com.yjq.electricitysystem.mapper.ConsumptionlogInfoMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -17,9 +19,7 @@ public class ConsumptionlogInfoService {
     @Resource
     private ConsumptionlogInfoMapper consumptionlogInfoMapper;
 
-    public PageInfo<ConsumptionlogInfo> selectPage(Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        List<ConsumptionlogInfo> list = consumptionlogInfoMapper.selectAll();
-        return PageInfo.of(list);
+        public BigDecimal selectPage(String month, Integer userid) {
+            return consumptionlogInfoMapper.selectMonthlySum(month, userid);
     }
 }

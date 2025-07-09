@@ -1,83 +1,64 @@
 // src/main/java/com/example/demo/controller/UserInfoController.java
 package com.yjq.electricitysystem.controller;
 
+import com.yjq.electricitysystem.common.Result;
+import com.yjq.electricitysystem.dto.ConsumptionDto;
+import com.yjq.electricitysystem.dto.PasswordChangeDto;
+import com.yjq.electricitysystem.dto.UserInfoDto;
 import com.yjq.electricitysystem.entity.UserInfo;
 import com.yjq.electricitysystem.service.UserInfoService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+//import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/users")
 public class UserInfoController {
     private final UserInfoService service;
-    public UserInfoController(UserInfoService service) { this.service = service; }
 
-    // 列表
-    @GetMapping
-    public List<UserInfo> listAll() {
-        return service.listAll();
+    public UserInfoController(UserInfoService service) {
+        this.service = service;
     }
 
-//    public class UserInfoDto {
-//        private Integer userCode;
-//        private String userName;
-//        private Integer areaCode;
-//        private Integer communityCode;
-//        private BigDecimal balance;
-//        // getters & setters
-//    }
-//
-//    @GetMapping("/users")
-//    public List<UserInfoDto> listAll() {
-//        return userService.listAll().stream()
-//                .map(u -> {
-//                    UserInfoDto dto = new UserInfoDto();
-//                    dto.setUserCode(u.getUserCode());
-//                    dto.setUserName(u.getUserName());
-//                    dto.setAreaCode(u.getAreaCode());
-//                    dto.setCommunityCode(u.getCommunityCode());
-//                    dto.setBalance(u.getBalance());
-//                    return dto;
-//                })
-//                .toList();
-//    }
-
-    // 单条
+    /**
+     * 1. 查询单个用户信息（密码字段 null）
+     */
     @GetMapping("/{userCode}")
-    public ResponseEntity<UserInfo> getOne(@PathVariable Integer userCode) {
-        return service.get(userCode)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public Result getById(@PathVariable Integer userCode) {
+        UserInfo u = service.getById(userCode);
+        return Result.success(u);
     }
 
-    // 新增
-    @PostMapping
-    public UserInfo create(@RequestBody UserInfo u) {
-        return service.create(u);
-    }
-
-    // 修改
-    @PutMapping("/{userCode}")
-    public ResponseEntity<UserInfo> update(
+    /**
+     * 2. 修改密码
+     */
+    @PutMapping("/{userCode}/password")
+    public Result changePassword(
             @PathVariable Integer userCode,
-            @RequestBody UserInfo u
+            @RequestParam String newPwd
     ) {
-        if (!service.get(userCode).isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(service.update(userCode, u));
+        service.changePassword(userCode,newPwd);
+        return Result.success();
     }
 
-    // 删除
-    @DeleteMapping("/{userCode}")
-    public ResponseEntity<Void> delete(@PathVariable Integer userCode) {
-        if (!service.get(userCode).isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        service.delete(userCode);
-        return ResponseEntity.noContent().build();
+    /**
+     * 3. 查询指定月份用电 (YYYY-MM)
+     */
+    @GetMapping("/{userCode}/consumption")
+    public Result consumption(
+            @PathVariable Integer userCode,
+            @RequestParam @Pattern(regexp = "\\d{4}-\\d{2}") String month
+    ) {
+        UserInfoService.ConsumptionResult cr = service.getConsumption(userCode, month);
+        return Result.success(cr);
     }
 }

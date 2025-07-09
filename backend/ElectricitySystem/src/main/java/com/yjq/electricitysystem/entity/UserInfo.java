@@ -1,6 +1,7 @@
 // src/main/java/com/example/demo/entity/UserInfo.java
 package com.yjq.electricitysystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -15,7 +16,11 @@ public class UserInfo {
     @Column(name = "user_name", length = 50)
     private String userName;
 
-    @Column(name = "user_passwd", length = 30)
+    /**
+     * 写时能接收，序列化到前端时不输出
+     */
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "user_passwd")
     private String userPasswd;
 
     @Column(name = "area_code")

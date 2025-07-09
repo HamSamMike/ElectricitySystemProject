@@ -3,6 +3,7 @@ package com.yjq.electricitysystem.controller;
 import com.github.pagehelper.PageInfo;
 import com.yjq.electricitysystem.common.Result;
 import com.yjq.electricitysystem.entity.Admin;
+import com.yjq.electricitysystem.entity.AreaInfo;
 import com.yjq.electricitysystem.service.AdminService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,27 @@ public class AdminController {
         return Result.success(list);
     }
 
+    @PostMapping("/add")
+    // 增加数据
+    public Result addAreaInfo(@RequestBody Admin admin){
+        adminService.add(admin);
+        return Result.success();
+    }
+
+    @PutMapping("/update")
+    // 更新数据
+    public Result updateAreaInfo(@RequestBody Admin admin){
+        adminService.update(admin);
+        return Result.success();
+    }
+
+    @DeleteMapping("/deleteById/{code}")
+    // 删除单个数据
+    public Result deleteByIdAreaInfo(@PathVariable Integer code){
+        adminService.deleteById(code);
+        return Result.success();
+    }
+
     // 查询单个管理员type=1的数据
     @GetMapping("/selectByType/{type}")
     public Result selectAll(@PathVariable Integer type) {
@@ -31,21 +53,13 @@ public class AdminController {
             return Result.success(admin);
     }
 
-    // 分页查询,pageNum为当前页码，pageSize为页面大小
-    @GetMapping("/selectPage")
-    public Result selectPage(@RequestParam(defaultValue = "1") Integer pageNum,
-                             @RequestParam(defaultValue = "15") Integer pageSize) {
-        PageInfo<Admin> pageInfo = adminService.selectPage(pageNum, pageSize);
-        return Result.success(pageInfo);
-    }
-
-    /**
-     * DELETE /api/v1/admins/{adminCode}
-     * 删除管理员
-     */
-//    @DeleteMapping("/{adminCode}")
-//    public Result<Void> delete(@PathVariable Long adminCode) {
-//        adminService.delete(adminCode);
-//        return Result.success();
+//    // 分页查询,pageNum为当前页码，pageSize为页面大小
+//    @GetMapping("/selectPage")
+//    public Result selectPage(@RequestParam(defaultValue = "1") Integer pageNum,
+//                             @RequestParam(defaultValue = "15") Integer pageSize) {
+//        PageInfo<Admin> pageInfo = adminService.selectPage(pageNum, pageSize);
+//        return Result.success(pageInfo);
 //    }
+
+
 }

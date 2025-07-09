@@ -4,8 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yjq.electricitysystem.mapper.ConsumptionlogInfoMapper">
 
-    <select id="selectAll" parameterType="int" resultType="com.yjq.electricitysystem.entity.ConsumptionlogInfo">
-        SELECT * FROM OMS.T_CONSUMPTIONLOG
+    <select id="selectMonthlySum" resultType="java.math.BigDecimal">
+  <![CDATA[
+        SELECT SUM(consume_num) AS total_consumption
+        FROM OMS.t_consumptionlog
+        WHERE user_code = #{userid}
+          AND logdate >= TRUNC(TO_DATE(#{month}, 'YYYY-MM'), 'MM')
+          AND logdate < ADD_MONTHS(TRUNC(TO_DATE(#{month}, 'YYYY-MM'), 'MM'), 1)
+        ]]>
     </select>
 
 </mapper>

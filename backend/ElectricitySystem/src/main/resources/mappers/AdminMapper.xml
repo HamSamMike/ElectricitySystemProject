@@ -8,4 +8,23 @@
         SELECT * FROM OMS.t_admininfo
     </select>
 
+    <insert id="insert" parameterType="com.yjq.electricitysystem.entity.Admin">
+        INSERT INTO OMS.T_ADMININFO (ADMIN_CODE, ADMIN_NAME,ADMIN_PASSWD,ADMIN_TYPE,AREA_CODE)
+        VALUES (#{adminCode},#{adminName},#{adminPasswd},#{adminType},#{areaCode})
+    </insert>
+
+    <update id="updateById" parameterType="com.yjq.electricitysystem.entity.Admin">
+        UPDATE OMS.T_ADMININFO
+        <!-- trim 会在开头加 SET，并去掉末尾多余的逗号 -->
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="adminName   != null">ADMIN_NAME   = #{adminName},</if>
+            <if test="adminPasswd != null">ADMIN_PASSWD = #{adminPasswd},</if>
+            <if test="adminType   != null">ADMIN_TYPE   = #{adminType},</if>
+            <if test="areaCode    != null">AREA_CODE    = #{areaCode},</if>
+        </trim>
+        <where>
+            ADMIN_CODE = #{adminCode}
+        </where>
+    </update>
+
 </mapper>

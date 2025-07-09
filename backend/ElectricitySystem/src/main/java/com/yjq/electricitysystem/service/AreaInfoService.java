@@ -35,5 +35,7 @@ public class AreaInfoService {
     }
 
 
-
+    public AreaInfo selectById(Integer id) {
+        return areaMapper.selectById(id);
+    }
 }

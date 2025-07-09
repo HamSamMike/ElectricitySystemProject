@@ -22,4 +22,8 @@ public class ElectricityPriceInfoService {
         List<ElectricityPriceInfo> list = electricityPriceInfoMapper.selectAll();
         return PageInfo.of(list);
     }
+
+    public ElectricityPriceInfo selectById(Integer id) {
+        return electricityPriceInfoMapper.selectById(id);
+    }
 }

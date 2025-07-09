@@ -17,10 +17,17 @@ public class CommunityInfoService {
     @Resource
     private CommunityInfoMapper CommunityInfoMapper;
 
-    public PageInfo<CommunityInfo> selectPage(Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        List<CommunityInfo> list = CommunityInfoMapper.selectAll();
-        return PageInfo.of(list);
+    public List<CommunityInfo> selectPage() {
+        return CommunityInfoMapper.selectPage();
 
+    }
+    //特定区域所有社区
+    public List<CommunityInfo> selectPageCode(Integer code) {
+        return CommunityInfoMapper.selectByAreaCode(code);
+    }
+
+    //特定社区
+    public CommunityInfo selectById(Integer code,Integer id) {
+        return CommunityInfoMapper.selectById(code,id);
     }
 }

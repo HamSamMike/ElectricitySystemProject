@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjq.electricitysystem.mapper.ConsumeincomeInfoMapper">
+
+    <resultMap id="SubBureausResultMap" type="com.yjq.electricitysystem.entity.ConsumeincomeInfo">
+        <result column="income_time"       property="incomeTime"/>
+        <result column="fee_month"         property="feeMonth"/>
+        <result column="community_code"    property="communityCode"/>
+        <result column="area_code"         property="areaCode"/>
+        <result column="total_fee"         property="totalFee"/>
+        <result column="total_consumption" property="totalConsume"/>  <!-- 新增这一行 -->
+    </resultMap>
+
+    <!--
+      调用存储过程 p_consumeincome：
+        - 入参 P_AREA_CODE  对应 #{areaCode, mode=IN, jdbcType=INTEGER}
+        - 入参 P_MONTH      对应 #{month,   mode=IN, jdbcType=VARCHAR}
+      不返回 ResultSet，所以用 <insert> 或 <update> 都可以，只要 statementType="CALLABLE"。
+    -->
+    <insert id="generateInfo"
+            statementType="CALLABLE"
+            parameterType="map">
+        { CALL OMS.P_CONSUMEINCOME_OPTIMIZED(
+                #{areaCode, mode=IN, jdbcType=INTEGER},
+                #{month,    mode=IN, jdbcType=VARCHAR}
+               ) }
+    </insert>
+    <select id="selectSubBureaus" resultType="com.yjq.electricitysystem.entity.ConsumeincomeInfo"   resultMap="SubBureausResultMap">
+        SELECT * FROM OMS.t_consumeincome
+                 WHERE area_code = #{areaCode} AND TRUNC(fee_month,'MM') = TO_DATE(#{month},'YYYY-MM')
+
+    </select>
+    <select id="selectGeneralAdministration"
+            resultType="com.yjq.electricitysystem.entity.ConsumeincomeInfo"
+            parameterType="map">
+        SELECT
+            v.consumptiondate           AS feeMonth,       -- 视图里的月度字段
+            v.area_name                 AS areaName,
+            SUM(v.consume_num)          AS totalConsume,   -- 用电量合计
+            SUM(v.supply_num)           AS totalSupply     -- 供电量合计
+        FROM OMS.v_consumptionnum v
+        WHERE v.area_name      = #{areaName}
+          AND v.consumptiondate = #{month}             -- 例如 '2025-01'
+        GROUP BY
+            v.consumptiondate,
+            v.area_name
+        ORDER BY
+            v.consumptiondate
+    </select>
+
+</mapper>

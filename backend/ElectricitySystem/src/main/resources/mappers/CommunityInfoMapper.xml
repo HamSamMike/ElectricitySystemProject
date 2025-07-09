@@ -4,8 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yjq.electricitysystem.mapper.CommunityInfoMapper">
 
-    <select id="selectAll" parameterType="int" resultType="com.yjq.electricitysystem.entity.CommunityInfo">
+<!--    <select id="selectAll" parameterType="int" resultType="com.yjq.electricitysystem.entity.CommunityInfo">-->
+<!--        SELECT * FROM OMS.T_COMMUNITY-->
+<!--    </select>-->
+
+<!--    <select id="selectByAreaCode" resultType="com.yjq.electricitysystem.entity.CommunityInfo">-->
+<!--        SELECT * FROM OMS.T_COMMUNITY WHERE AREA_CODE ={#areaCode}-->
+<!--    </select>-->
+    <select id="selectPage" resultType="com.yjq.electricitysystem.entity.CommunityInfo">
         SELECT * FROM OMS.T_COMMUNITY
+    </select>
+    <select id="selectByAreaCode" resultType="com.yjq.electricitysystem.entity.CommunityInfo">
+        SELECT * FROM OMS.T_COMMUNITY WHERE AREA_CODE = #{areaCode}
+
     </select>
 
 </mapper>

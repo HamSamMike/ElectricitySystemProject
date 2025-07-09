@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjq.electricitysystem.mapper.SupplyStatusMapper">
+
+    <resultMap id="SupplyStatusMap" type="com.yjq.electricitysystem.entity.SupplyStatusInfo">
+        <result column="logdate"        property="logDate"/>
+        <result column="area_code"      property="areaCode"/>
+        <result column="community_code" property="communityCode"/>
+        <result column="supply_num"     property="supplyNum"/>
+        <result column="admin_code"     property="adminCode"/>
+        <result column="applytime"      property="applyTime"/>
+        <result column="approvaltime"   property="approvalTime"/>
+        <result column="status"         property="status"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.yjq.electricitysystem.entity.SupplyStatusInfo">
+        INSERT INTO OMS.T_SUPPLYSTATUS
+        (logdate,area_code,community_code,supply_num,admin_code,applytime,status)
+        VALUES
+            (#{logDate},#{areaCode},#{communityCode},#{supplyNum},#{adminCode},#{applyTime},#{status})
+    </insert>
+
+    <select id="selectByStatus" resultMap="SupplyStatusMap" parameterType="int">
+        SELECT * FROM OMS.T_SUPPLYSTATUS
+        WHERE status = #{status}
+        ORDER BY applytime DESC
+    </select>
+
+    <update id="updateStatus" parameterType="com.yjq.electricitysystem.entity.SupplyStatusInfo">
+        UPDATE OMS.T_SUPPLYSTATUS
+        SET status       = #{status},
+            admin_code   = #{adminCode},
+            approvaltime = #{approvalTime}
+        WHERE logdate        = #{logDate}
+          AND area_code      = #{areaCode}
+          AND community_code = #{communityCode}
+    </update>
+
+</mapper>

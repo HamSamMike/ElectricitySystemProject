@@ -16,27 +16,33 @@ public class AreaInfoController {
     @Resource
     private AreaInfoService areaInfoService;
 
-    @PostMapping("/add")
-    // 增加数据
-    public Result addAreaInfo(@RequestBody AreaInfo areaInfo){
-        areaInfoService.add(areaInfo);
-        return Result.success();
-    }
+//    @PostMapping("/add")
+//    // 增加数据
+//    public Result addAreaInfo(@RequestBody AreaInfo areaInfo){
+//        areaInfoService.add(areaInfo);
+//        return Result.success();
+//    }
 
-    @PutMapping("/update")
-    // 更新数据
-    public Result updateAreaInfo(@RequestBody AreaInfo areaInfo){
-        areaInfoService.update(areaInfo);
-        return Result.success();
-    }
+//    @PutMapping("/update")
+//    // 更新数据
+//    public Result updateAreaInfo(@RequestBody AreaInfo areaInfo){
+//        areaInfoService.update(areaInfo);
+//        return Result.success();
+//    }
 
-    @DeleteMapping("/deleteById/{id}")
-    // 删除单个数据
-    public Result deleteByIdAreaInfo(@PathVariable Integer id){
-        areaInfoService.deleteById(id);
-        return Result.success();
-    }
+//    @DeleteMapping("/deleteById/{id}")
+//    // 删除单个数据
+//    public Result deleteByIdAreaInfo(@PathVariable Integer id){
+//        areaInfoService.deleteById(id);
+//        return Result.success();
+//    }
 
+    // 查询单个区域的数据
+    @GetMapping("/selectById/{id}")
+    public Result selectAll(@PathVariable Integer id) {
+        AreaInfo areaInfo = areaInfoService.selectById(id);
+        return Result.success(areaInfo);
+    }
 
     // 分页查询,pageNum为当前页码，pageSize为页面大小
     @GetMapping("/selectPage")
